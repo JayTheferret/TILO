@@ -25,3 +25,6 @@ knotenanz(node(_,Lb,Rb),s(N)) :- knotenanz(Lb,N1), knotenanz(Rb,N2), add(N1,N2,N
     %knotenanz(node(a,node(b,node(d,empty,empty),node(e,empty,empty)),node(c,empty,node(f,node(g,empty,empty),empty))),N).
 %Beispiel Baum aus Aufgabenstellung
     %knotenanz(node(a,node(b,empty,empty),node(empty,empty,empty)),X).
+
+
+%abfragen fangen mit Z an
