@@ -20,8 +20,8 @@ postorder(node(X,Lb,Rb),Ys) :-      postorder(Lb,L1s), postorder(Rb,L2s) ,append
 
 %roots(Xbs,Ys)  :   Xbs ist eine Liste von Binärbäumen (geschachtelte Induktion). 
 roots([],[]).
-roots([empty|Xbs],Ys) :- roots(Xbs,Ys).
-roots([node(X,Lb,Rb)|Xbs],[X|Ys]) :- roots(Xbs,Ys), binbaum(Lb),binbaum(Rb).
+roots([empty|Xbs],Ys) :- roots(Xbs,Ys). 
+roots([node(X,Lb,Rb)|Xbs],[X|Ys]) :- roots(Xbs,Ys), binbaum(Lb),binbaum(Rb). 
 
 %Beispiele:
     %Fall1
