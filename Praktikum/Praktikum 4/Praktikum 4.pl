@@ -1,60 +1,50 @@
-% a)
-
-gueltigesWort(Xs) :- start(Q), gueltigesWort(Xs,Q).                 %muss gueltig anfangen
-gueltigesWort([X|Xs],Q) :- regeln(Q,X,Qn), gueltigesWort(Xs,Qn).    %muss gueltig sein für naechsten zustand
-gueltigesWort([],Q) :- ende(Q).                                     %leeres Wort
-
-% alphabet
+    % a)
+    
+% sigma(X) :- X ist im Alphabet
 sigma(h).
 sigma(a).
 sigma(!).
 
-% startvariable
+% start(X) :- X ist Startzustand
 start(q0).
 
-% endvariable
+% ende(X) :- X ist Endzustand
 ende(q3).
 
-% regeln (zustände und übergang)
-regeln(q0,h,q0).
-regeln(q0,h,q1).
-regeln(q1,a,q2).
-regeln(q2,h,q1).
-regeln(q2,!,q3).
+% zustand(X) :- X ist in Zustandsmenge Z (-> endlich)
+zustand(q0).
+zustand(q1).
+zustand(q2).
+zustand(q3).
 
-%ungueltig
-?- gueltigesWort([a,h,a,h,a,h,a,!]).
-%gueltig.
-?- gueltigesWort([h,h,h,a,h,a,h,a,h,a,!]).
-?- gueltigesWort([h,a,h,a,h,a,!]).
+    %(delta() :- wort entspricht regeln)
+% delta(Zustand, Eingabe, ZustandNeu):- zustände und übergang
+delta(q0,h,q0).
+delta(q0,h,q1).
+delta(q1,a,q2).
+delta(q2,h,q1).
+delta(q2,!,q3).
 
-% b) 
-%Implementieren Sie eine Relation lvonN(Ws), die allgemein der Sprache entspricht,
-% von dem in a) definierten NEA erkannt wird. 
- %Implementierung der Relationen  
- %- delta_stern(Zalt,Ws,Zneu) für die Erweiterung der Transitionsrelation   delta(Zalt,A,Zneu) und  
- %- sigma_stern(Ws) der Menge der Wörter über Sigma benötigt. (formalen Definitionen wurden in Übungsaufgabe 88 formuliert.) 
+    % b)
 
- %Setzen Sie die Formalismen der Vorlesung bzw. Übung wieder 1 zu 1 in Prolog um! 
+% lvonN(Ws) :- Ws ist gueltiges Wort in Sprache
+lvonN(Ws) :- start(Q), sigma_stern(Ws), ende(Qn), delta_stern(Q,Ws,Qn). % überpruft anfang, ende und zwischenschritte
 
-%sigma_stern(Ws). :- Endzustand
+% sigma_stern(X) :- X Wörter die dem Alphabet der Grammatik entsprechen
 sigma_stern([]).
-sigma_stern([X,Ws]).
+sigma_stern([X|Ws]) :- sigma(X), sigma_stern(Ws).
 
-%redrel_plus :- in endlichen schritten erreichbar
-
-
-
-%redrel(Alpha, Beta) :-  append(A1, L, Zwi1), append(Zwi1, A2, Alpha), append(A1, R, Zwi2), append(Zwi2, A2, Beta), regel(L, R).
-%redrel_plus(Alpha, Beta):- redrel(Alpha, Beta).
-%redrel_plus(Alpha, Beta):- redrel(Alpha, Zwisches), redrel_plus(Zwisches, Beta).
-
-lvonN(Ws).
-lvonW(Ws) :- sigma_stern(Ws) , start(S), redrel_plus(S,Ws).
-% lvonG(Ws) :- sigma_stern(Ws), start(S), redrel_plus([S],Ws).
-
-%lvong(Ws):- start(vS), redrel_plus([vS], Ws), sigma_stern(Ws).
+% delta_regeln(Zustand,[Eingabe|Rest],NeuerZustand) :- Übergangsfunktion (Zustand Q + Eingabe X = Zustand neu (Qn))
+delta_stern(Q,[X|Xs],Qn) :- delta(Q, X, Qtmp), delta_stern(Qtmp, Xs, Qn).   % neuer Zustand bis Endzustand erreicht
+delta_stern(Q,[],Q).                                                        % kein neuer Zustand
 
 
-% delta(Xalt,A,Xneu).
-delta_stern(Xalt,Ws,Xneu).
+    %Abfragen
+%ungueltig
+?- lvonN([a,h,a,h,a,h,a,!]).
+%gueltig.
+?- lvonN([h,h,h,a,h,a,h,a,h,a,!]).
+?- lvonN([h,a,h,a,h,a,!]).
+
+%online CMD: https://askuri.github.io/PrologBFS/wasm/
+    %(! durch u ersetzen)
